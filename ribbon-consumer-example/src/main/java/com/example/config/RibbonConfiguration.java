@@ -40,6 +40,12 @@ import org.springframework.context.annotation.Primary;
  *    }
  * 需要注意的是，如果应用中有多个 IRule Bean，那么我们必须指定其中一个优先自动装配，加 @Primary 即可实现。
  *
+ * 问题： 使用以下的方式换 rule 时，出现了一个大问题，就是服务提供者的 server list 出现覆盖问题。
+ * 描述： 服务1的 server list：[8080, 8081], 服务2的 server list：[8082, 8083]。后面访问服务1的时候，
+ *     服务1的 server list 被覆盖为 [8082, 8083]，所以找不到对应的接口，报了异常，消费者这边报 500，
+ *     并提示 404，找不到服务1的接口。
+ * 解决方案：待解决。。。
+ *
  * @author Fatal
  * @date 2020/6/26 0026 9:30
  * @desc @Primary 在相同类型的多个 Bean 中，选择优先自动装配的 Bean
