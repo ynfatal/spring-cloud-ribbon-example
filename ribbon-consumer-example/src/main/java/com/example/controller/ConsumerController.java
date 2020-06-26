@@ -15,9 +15,14 @@ public class ConsumerController {
     @Autowired
     private RestTemplate restTemplate;
 
-    @GetMapping
+    @GetMapping("/hello")
     public String hello() {
         return restTemplate.getForEntity("http://RIBBON-PROVIDER-EXAMPLE", String.class).getBody();
+    }
+
+    @GetMapping("/hello2")
+    public String hello2() {
+        return restTemplate.getForEntity("http://RIBBON-PROVIDER2-EXAMPLE", String.class).getBody();
     }
 
 }
