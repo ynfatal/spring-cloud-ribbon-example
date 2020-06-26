@@ -3,7 +3,6 @@ package com.example.config;
 import com.netflix.loadbalancer.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
 /**
