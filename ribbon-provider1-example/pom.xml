@@ -7,9 +7,9 @@
         <artifactId>spring-cloud-ribbon-example</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>ribbon-provider-example</artifactId>
+    <artifactId>ribbon-provider1-example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ribbon-provider-example</name>
+    <name>ribbon-provider1-example</name>
     <description>Demo project for Spring Cloud ribbon provider</description>
 
     <properties>

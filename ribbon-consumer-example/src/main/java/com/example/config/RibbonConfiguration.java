@@ -20,11 +20,11 @@ import org.springframework.context.annotation.Primary;
  * com.netflix.loadbalancer.ZoneAwareLoadBalancer#setRule(com.netflix.loadbalancer.IRule)
  * com.netflix.loadbalancer.BaseLoadBalancer#setRule(com.netflix.loadbalancer.IRule)
  *
- * ZoneAvoidanceRule 底层默认实现的规则是 RoundRobinRule，这个规则我们可以换的。假如我们想换成 RandomRule，写法如下：
- *     @Bean
- *     public IRule randomRule() {
- *         return new RandomRule();
- *     }
+ * Ribbon 默认负载均衡规则是 ZoneAvoidanceRule ，这个规则我们可以换的。假如我们想换成 RandomRule，写法如下：
+ *    @Bean
+ *    public IRule randomRule() {
+ *        return new RandomRule();
+ *    }
  * ILoadBalancer 的 Bean 在初始化的时候，会引入 IRule Bean 作为负载均衡规则。在这里为了直观点，就贴出源码了：
  *    @Bean
  *    @ConditionalOnMissingBean
@@ -40,15 +40,20 @@ import org.springframework.context.annotation.Primary;
  *    }
  * 需要注意的是，如果应用中有多个 IRule Bean，那么我们必须指定其中一个优先自动装配，加 @Primary 即可实现。
  *
- * 问题： 使用以下的方式换 rule 时，出现了一个大问题，就是服务提供者的 server list 出现覆盖问题。
+ * 问题： 使用上边的方式换 rule 时，出现了一个大问题，就是服务提供者的 ribbon client server list 出现覆盖问题。
  * 描述： 服务1的 server list：[8080, 8081], 服务2的 server list：[8082, 8083]。后面访问服务1的时候，
  *     服务1的 server list 被覆盖为 [8082, 8083]，所以找不到对应的接口，报了异常，消费者这边报 500，
  *     并提示 404，找不到服务1的接口。
- * 解决方案：待解决。。。
+ * 解决方案：在启动类上加上 @RibbonClients(defaultConfiguration = RibbonConfiguration.class)，
+ *     指定 ribbon client 默认配置组件。（使用这种方式 RibbonConfiguration 必须声明为配置组件，使用 @Configuration 修饰它）
+ *     这种方式呢，可以为本服务提供一个全局的 ribbon client 配置，调用其他服务提供者都使用这套配置。
  *
+ * @implNote
+ * 1. @Primary 在相同类型的多个 Bean 中，选择优先自动装配的 Bean;
+ * 2. 自定义的 Ribbon Client 全局配置组件需要用 @RibbonClients defaultConfiguration 属性指定，否则会出现
+ * ribbon client server list 覆盖问题。
  * @author Fatal
  * @date 2020/6/26 0026 9:30
- * @desc @Primary 在相同类型的多个 Bean 中，选择优先自动装配的 Bean
  */
 @Configuration
 public class RibbonConfiguration {
@@ -57,7 +62,6 @@ public class RibbonConfiguration {
      * 随机
      */
     @Bean
-    @Primary
     public IRule randomRule() {
         return new RandomRule();
     }
@@ -100,6 +104,7 @@ public class RibbonConfiguration {
      * AvailabilityPredicate：当最坏区域的聚合度量达到阈值，筛选出该区域中所有服务器的服务器。确定最坏区域的逻辑在 ZoneAwareLoadBalancer 中描述
      */
     @Bean
+    @Primary
     public IRule zoneAvoidanceRule() {
         return new ZoneAvoidanceRule();
     }

@@ -10,6 +10,7 @@ spring:
         # 默认开启负载均衡策略
         enabled: true
 
+
 # eureka 配置
 eureka:
   instance:
@@ -25,4 +26,4 @@ ribbon:
     # 开启 Ribbon 饥饿加载模式（加载 Ribbon 配置），默认 false，即懒加载。
     enabled: true
     # 指定需要饥饿加载模式的 Client
-    clients: RIBBON-PROVIDER-EXAMPLE, RIBBON-PROVIDER2-EXAMPLE
+    clients: RIBBON-PROVIDER1-EXAMPLE, RIBBON-PROVIDER2-EXAMPLE, RIBBON-PROVIDER3-EXAMPLE

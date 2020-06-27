@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/6/25 0025 19:34
  */
 @RestController
-public class ProviderController {
+public class Provider1Controller {
 
     @Value("${server.port}")
     private Integer port;
@@ -17,8 +17,8 @@ public class ProviderController {
     @Value("${spring.application.name}")
     private String name;
 
-    @GetMapping("/provider")
-    public String provider() {
+    @GetMapping("/provider1")
+    public String provider1() {
         return String.format("server name : %s, port: %s", name, port);
     }
 
