@@ -52,10 +52,20 @@ import org.springframework.context.annotation.Primary;
  * 1. @Primary 在相同类型的多个 Bean 中，选择优先自动装配的 Bean;
  * 2. 自定义的 Ribbon Client 全局配置组件需要用 @RibbonClients defaultConfiguration 属性指定，否则会出现
  * ribbon client server list 覆盖问题。
+ * 3. org.springframework.context.annotation.Configuration#proxyBeanMethods()（翻译的）
+ * 指定是否应该代理{@code @Bean}方法来强制执行bean生命周期行为，例如在用户代码中直接调用{@code @Bean}方法时
+ * 返回共享的单例bean实例。这个特性需要方法拦截，通过运行时生成的CGLIB子类实现，它有一些限制，比如不允许
+ * configuration类及其方法声明{@code final}。<p>默认是{@code true}，允许在配置类内的“bean间引用”，以及
+ * 外部调用这个配置的{@code @Bean}方法，例如从另一个配置类调用。如果由于这个特定配置的每个{@code @Bean}方法都是
+ * 独立的，并且被设计为容器使用的普通工厂方法，那么将这个标志切换为{@code false}，以避免CGLIB子类处理。
+ * <p>关闭bean方法拦截有效地单独处理{@code @Bean}方法，就像在非{@code @Configuration}类上声明时一样。
+ * “@Bean 精简模式”(参见{@link Bean @Bean的javadoc})。因此，它在行为上等同于删除{@code @Configuration}构造型。
+ * 理解：这个配置组件中的所有 Bean 都是独立的，并且被设计为容器使用的普通工厂方法（我理解为托管给 Spring 容器管理），
+ * 所以在这里设置为 false，可以高效地处理 Bean 方法。
  * @author Fatal
  * @date 2020/6/26 0026 9:30
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class RibbonConfiguration {
 
     /**
