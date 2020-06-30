@@ -40,9 +40,9 @@ import org.springframework.context.annotation.Primary;
  *    }
  * 需要注意的是，如果应用中有多个 IRule Bean，那么我们必须指定其中一个优先自动装配，加 @Primary 即可实现。
  *
- * 问题： 使用上边的方式换 rule 时，出现了一个大问题，就是服务提供者的 ribbon client server list 出现覆盖问题。
+ * 问题： 使用上边的方式换 rule 时，出现了一个大问题，就是服务提供者的 ILoadBalancer 出现指定错误问题。
  * 描述： 服务1的 server list：[8080, 8081], 服务2的 server list：[8082, 8083]。后面访问服务1的时候，
- *     服务1的 server list 被覆盖为 [8082, 8083]，所以找不到对应的接口，报了异常，消费者这边报 500，
+ *     拿到服务2 的 server list，所以找不到对应的接口，报了异常，消费者这边报 500，
  *     并提示 404，找不到服务1的接口。
  * 解决方案：在启动类上加上 @RibbonClients(defaultConfiguration = RibbonConfiguration.class)，
  *     指定 ribbon client 默认配置组件。（使用这种方式 RibbonConfiguration 必须声明为配置组件，使用 @Configuration 修饰它）
@@ -51,7 +51,7 @@ import org.springframework.context.annotation.Primary;
  * @implNote
  * 1. @Primary 在相同类型的多个 Bean 中，选择优先自动装配的 Bean;
  * 2. 自定义的 Ribbon Client 全局配置组件需要用 @RibbonClients defaultConfiguration 属性指定，否则会出现
- * ribbon client server list 覆盖问题。
+ *  ILoadBalancer 指定错误问题。
  * 3. org.springframework.context.annotation.Configuration#proxyBeanMethods()（翻译的）
  * 指定是否应该代理{@code @Bean}方法来强制执行bean生命周期行为，例如在用户代码中直接调用{@code @Bean}方法时
  * 返回共享的单例bean实例。这个特性需要方法拦截，通过运行时生成的CGLIB子类实现，它有一些限制，比如不允许
