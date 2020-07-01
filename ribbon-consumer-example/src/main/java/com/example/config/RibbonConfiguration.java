@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Primary;
  * 问题： 使用上边的方式换 rule 时，出现了一个大问题，就是服务提供者的 ILoadBalancer 出现指定错误问题。
  * 描述： 服务1的 server list：[8080, 8081], 服务2的 server list：[8082, 8083]。后面访问服务1的时候，
  *     拿了服务2 的 server list，所以找不到对应的接口，报了异常，消费者这边报 500，并提示 404，找不到服务1的接口。
+ *     可以在方法 com.example.controller.ConsumerController#ribbonContext() 中 debug 查看各个 rule 的 lb。
  * 解决方案：在启动类上加上 @RibbonClients(defaultConfiguration = RibbonConfiguration.class)，
  *     指定 ribbon client 默认配置组件。（使用这种方式 RibbonConfiguration 必须声明为配置组件，使用 @Configuration 修饰它）
  *     这种方式呢，可以为本服务提供一个全局的 ribbon client 配置，调用其他服务提供者都使用这套配置。
