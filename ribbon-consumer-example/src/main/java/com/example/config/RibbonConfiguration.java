@@ -45,7 +45,7 @@ import org.springframework.context.annotation.Primary;
  *     拿了服务2 的 server list，所以找不到对应的接口，报了异常，消费者这边报 500，并提示 404，找不到服务1的接口。
  *     可以在方法 com.example.controller.ConsumerController#ribbonContext() 中 debug 查看各个 rule 的 lb。
  * 解决方案：在启动类上加上 @RibbonClients(defaultConfiguration = RibbonConfiguration.class)，
- *     指定 ribbon client 默认配置组件。（使用这种方式 RibbonConfiguration 必须声明为配置组件，使用 @Configuration 修饰它）
+ *     指定 ribbon client 默认配置组件。（使用这种方式 RibbonConfiguration 也不需要声明为配置组件，即不使用 @Configuration 修饰它）
  *     这种方式呢，可以为本服务提供一个全局的 ribbon client 配置，调用其他服务提供者都使用这套配置。
  *
  * @implNote
@@ -65,7 +65,7 @@ import org.springframework.context.annotation.Primary;
  * @author Fatal
  * @date 2020/6/26 0026 9:30
  */
-@Configuration(proxyBeanMethods = false)
+//@Configuration(proxyBeanMethods = false)
 public class RibbonConfiguration {
 
     /**
