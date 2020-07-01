@@ -69,55 +69,43 @@ import org.springframework.context.annotation.Primary;
 public class RibbonConfiguration {
 
     /**
-     * 随机
-     */
-    @Bean
-    public IRule randomRule() {
-        return new RandomRule();
-    }
-
-    /**
-     * 轮询
-     */
-    @Bean
-    public IRule roundRobinRule() {
-        return new RoundRobinRule();
-    }
-
-    /**
-     * 重试（基于轮询）
-     */
-    @Bean
-    public IRule retryRule() {
-        return new RetryRule();
-    }
-
-    /**
-     * 权重
-     */
-    @Bean
-    public IRule weightedResponseTimeRule() {
-        return new WeightedResponseTimeRule();
-    }
-
-    /**
-     * 减压
-     */
-    @Bean
-    public IRule bestAvailableRule() {
-        return new BestAvailableRule();
-    }
-
-    /**
      * 区域回避（基于轮询），默认的负载均衡规则
      * ZoneAvoidancePredicate：过滤掉断路器跳闸的服务器和来自此客户端的并发连接过多的服务器。
      * AvailabilityPredicate：当最坏区域的聚合度量达到阈值，筛选出该区域中所有服务器的服务器。确定最坏区域的逻辑在 ZoneAwareLoadBalancer 中描述
      */
     @Bean
-    @Primary
     public IRule zoneAvoidanceRule() {
         return new ZoneAvoidanceRule();
     }
 
+    // 随机
+    /*@Bean
+    public IRule randomRule() {
+        return new RandomRule();
+    }*/
+
+    // 轮询
+    /*@Bean
+    public IRule roundRobinRule() {
+        return new RoundRobinRule();
+    }*/
+
+    // 重试（基于轮询）
+    /*@Bean
+    public IRule retryRule() {
+        return new RetryRule();
+    }*/
+
+    // 权重
+    /*@Bean
+    public IRule weightedResponseTimeRule() {
+        return new WeightedResponseTimeRule();
+    }*/
+
+    // 减压
+    /*@Bean
+    public IRule bestAvailableRule() {
+        return new BestAvailableRule();
+    }*/
 
 }

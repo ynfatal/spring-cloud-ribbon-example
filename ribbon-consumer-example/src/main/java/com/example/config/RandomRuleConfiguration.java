@@ -3,6 +3,7 @@ package com.example.config;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.RandomRule;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
 /**
  * @author Fatal
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 public class RandomRuleConfiguration {
 
     @Bean
+    @Primary
     public IRule rule() {
         return new RandomRule();
     }

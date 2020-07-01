@@ -3,6 +3,7 @@ package com.example.config;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.RoundRobinRule;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
 /**
  * 局部负载均衡规则配置类（在被 @RibbonClient 指定之后变成配置组件）
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 public class RoundRobinRuleConfiguration {
 
     @Bean
+    @Primary
     public IRule rule() {
         return new RoundRobinRule();
     }
