@@ -3,7 +3,6 @@ package com.example.config;
 import com.netflix.loadbalancer.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 /**
  * Ribbon 默认规则为区域回避，实现类为 ZoneAvoidanceRule，这个类继承了 PredicateBasedRule，
@@ -38,16 +37,22 @@ import org.springframework.context.annotation.Primary;
  * 		return new ZoneAwareLoadBalancer<>(config, rule, ping, serverList,
  * 				serverListFilter, serverListUpdater);
  *    }
- * 需要注意的是，如果应用中有多个 IRule Bean，那么我们必须指定其中一个优先自动装配，加 @Primary 即可实现。
  *
- * 问题： 使用上边的方式换 rule 时，出现了一个大问题，就是服务提供者的 ILoadBalancer 出现指定错误问题。
+ * 问题： 使用自定义局部配置的 rule 时，出现了一个大问题，就是服务提供者的 ILoadBalancer 出现指定错误问题。
  * 描述： 服务1的 server list：[8080, 8081], 服务2的 server list：[8082, 8083]。后面访问服务1的时候，
  *     拿了服务2 的 server list，所以找不到对应的接口，报了异常，消费者这边报 500，并提示 404，找不到服务1的接口。
  *     可以在方法 com.example.controller.ConsumerController#ribbonContext() 中 debug 查看各个 rule 的 lb。
- * 解决方案：在启动类上加上 @RibbonClients(defaultConfiguration = RibbonConfiguration.class)，
- *     指定 ribbon client 默认配置组件。（使用这种方式 RibbonConfiguration 也不需要声明为配置组件，即不使用 @Configuration 修饰它）
- *     这种方式呢，可以为本服务提供一个全局的 ribbon client 配置，调用其他服务提供者都使用这套配置。
+ * 原因：自己搞出来的 bug，自定义全局配置类的 Bean 加了 @Primary 导致局部的 Bean 不起作用。
+ * 解决方式：自定义全局配置类的 @Primary 移到自定义局部配置类。
  *
+ * 同时存在自定义局部配置类和自定义全局配置类的话，，配置行为如下（和 Feign 的类似）：
+ * - 自定义全局：使用 org.springframework.cloud.netflix.ribbon.RibbonClients#defaultConfiguration() 指定自定义全局配置类，该配置类不需要标注为配置组件
+ * - 自定义局部：使用 org.springframework.cloud.netflix.ribbon.RibbonClient#configuration() 指定自定义局部配置类，该配置类不需要标注为配置组件
+ * 注意事项：
+ * - 相同类型的 Bean，在自定义局部配置类和自定义全局配置类中不能重复，否则会造成局部的 Bean 无法实例化，这样局部就没作用了
+ * - 在自义局部配置类给该 Bean 添加标注 @Primary，以表示该类型的 Bean 自定义局部配置的优先级高于自定义全局配置。
+ * - 如果是默认全局与其中一个自定义配置搭配，那么随便玩，要是怕出问题也可以以当前这个最严谨的方式配置，也就是两点注意事项。
+ *   估计后边继承 NamedContextFactory 的组件都这么玩。
  * @implNote
  * 1. @Primary 在相同类型的多个 Bean 中，选择优先自动装配的 Bean;
  * 2. 自定义的 Ribbon Client 全局配置组件需要用 @RibbonClients defaultConfiguration 属性指定，否则会出现
